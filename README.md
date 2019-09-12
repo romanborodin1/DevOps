@@ -31,10 +31,9 @@ You can choose and install your preferred Linux distributive here:
 All other installiations will be clearly describe in 
 the course.
 
-'''
+```
 ^_^
- 
-'''
+```
 ### Authors
 * **Vasiliy Ozerov** - *founder of the training project* - [ozerovvasyan](https://gitlab.rebrainme.com/ozerovvasyan) 
 * **Roman Borodin** - *Intitiator of this Git porject* - [Roman](https://gitlab.rebrainme.com/Roman)
