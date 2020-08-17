@@ -1,0 +1,115 @@
+[roma@node1 ~]$ vi initial-data.sql
+/* CLEANUP DATABASE */
+--comment
+
+DROP TBALE IF EXSITS USERS;
+DROP TBALE IF EXSITS UNIVERSITIES;
+DROP TBALE IF EXSITS CITIES;
+
+
+CREATE TABLE CITIES (
+    id bigint PRIMARY KEY,
+    title varchar NOT NULL
+);
+
+CREATE TABLE UNIVERSITIES (
+    id bigint PRIMARY KEY,
+    title varchar NOT NULL,
+    city_id bigint NOT NULL,
+    FOREIGN KEY (city_id) REFERENCES CITIES
+);
+
+CREATE TABLE USERS (
+    id bigint PRIMARY KEY,
+    login varchar UNIQUE NOT NULL,
+    first_name varchar NOT NULL,
+    last_name varchar NOT NULL,
+    university_id bigint,
+    FOREIGN KEY (university_id) REFERENCES UNIVERSITIES
+);
+
+
+INSERT INTO CITIES
+VALUES
+(1, 'Moscow'),
+(2, 'Saint-Petersburg');
+
+INSERT INTO UNIVERSITIES
+VALUES
+(1, 'MGU', 1),
+(2, 'MGTU Baumana', 1),
+(3, 'SPBGTU', 2);
+
+INSERT INTO USERS
+VALUES
+(1, 'ipupkin', 'Ivan', 'Pupkin', 1),
+(2, 'dshapkin', 'Dima', 'Shapkin', 2),
+(3, 'spechkin', 'Sasha', 'Pechkin', 1),
+(4, 'pperyshkin', 'Petya', 'Peryshkin', 3);
+
+[roma@node1 ~]$
+[roma@node1 ~]$
+[roma@node1 ~]$
+[roma@node1 ~]$
+[roma@node1 ~]$ sudo -u postgres psql < initial-data.sql
+DROP TABLE
+DROP TABLE
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 2
+INSERT 0 3
+INSERT 0 4
+[roma@node1 ~]$
+[roma@node1 ~]$ sudo -u postgres psql
+postgres=#
+postgres=#
+postgres=#
+postgres=#
+postgres=# select * from users;
+ id |   login    | first_name | last_name | university_id
+----+------------+------------+-----------+---------------
+  1 | ipupkin    | Ivan       | Pupkin    |             1
+  2 | dshapkin   | Dima       | Shapkin   |             2
+  3 | spechkin   | Sasha      | Pechkin   |             1
+  4 | pperyshkin | Petya      | Peryshkin |             3
+(4 rows)
+postgres=#
+postgres=# begin;
+BEGIN
+postgres=# delete from users where id = 1;
+DELETE 1
+postgres=# update users set university_id = 2 where id = 3
+postgres=# commit;
+COMMIT
+postgres=# select * from users JOIN universities on university_id = universities.id;
+ id |   login    | first_name | last_name | university_id | id |    title     | city_id
+----+------------+------------+-----------+---------------+----+--------------+---------
+  2 | dshapkin   | Dima       | Shapkin   |             2 |  2 | MGTU Baumana |       1
+  4 | pperyshkin | Petya      | Peryshkin |             3 |  3 | SPBGTU       |       2
+  3 | spechkin   | Sasha      | Pechkin   |             2 |  2 | MGTU Baumana |       1
+(3 rows)
+
+postgres=# select * from users RIGHT JOIN universities on university_id = universities.id;
+ id |   login    | first_name | last_name | university_id | id |    title     | city_id
+----+------------+------------+-----------+---------------+----+--------------+---------
+  2 | dshapkin   | Dima       | Shapkin   |             2 |  2 | MGTU Baumana |       1
+  4 | pperyshkin | Petya      | Peryshkin |             3 |  3 | SPBGTU       |       2
+  3 | spechkin   | Sasha      | Pechkin   |             2 |  2 | MGTU Baumana |       1
+    |            |            |           |               |  1 | MGU          |       1
+(4 rows)
+
+postgres=#
+postgres=# select * from users INNER JOIN universities on university_id = universities.id;
+ id |   login    | first_name | last_name | university_id | id |    title     | city_id
+----+------------+------------+-----------+---------------+----+--------------+---------
+  2 | dshapkin   | Dima       | Shapkin   |             2 |  2 | MGTU Baumana |       1
+  4 | pperyshkin | Petya      | Peryshkin |             3 |  3 | SPBGTU       |       2
+  3 | spechkin   | Sasha      | Pechkin   |             2 |  2 | MGTU Baumana |       1
+(3 rows)
+
+
+
+
+
